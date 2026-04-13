@@ -52,6 +52,11 @@ class TestRenderTrendTable:
         assert "alpha" in output
         assert "beta" in output
 
+    def test_output_contains_delta_value(self):
+        data = {"p1": [make_trend(delta=3.14)]}
+        output = render_trend_table(data)
+        assert "3.14" in output
+
 
 class TestOverallTrendStatus:
     def test_ok_when_no_degrading(self):
@@ -74,3 +79,8 @@ class TestOverallTrendStatus:
 
     def test_ok_when_empty(self):
         assert overall_trend_status({}) == "ok"
+
+    def test_ok_when_all_pipelines_have_empty_results(self):
+        """Pipelines with no TrendResult entries should not affect status."""
+        data = {"p1": [], "p2": []}
+        assert overall_trend_status(data) == "ok"

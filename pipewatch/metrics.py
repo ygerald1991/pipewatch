@@ -67,3 +67,20 @@ class PipelineMetric:
             "status": self.status.value,
             "error_message": self.error_message,
         }
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "PipelineMetric":
+        """Deserialize a metric from a plain dictionary.
+
+        Expects the same structure produced by ``to_dict``.
+        """
+        return cls(
+            pipeline_id=data["pipeline_id"],
+            timestamp=datetime.fromisoformat(data["timestamp"]),
+            rows_processed=data.get("rows_processed", 0),
+            rows_failed=data.get("rows_failed", 0),
+            duration_seconds=data.get("duration_seconds", 0.0),
+            lag_seconds=data.get("lag_seconds", 0.0),
+            status=PipelineStatus(data.get("status", PipelineStatus.UNKNOWN.value)),
+            error_message=data.get("error_message"),
+        )

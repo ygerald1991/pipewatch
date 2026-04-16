@@ -78,3 +78,10 @@ class TestSchedulerSession:
         due = session.due_pipelines()
         assert "p1" in due
         assert "p2" in due
+
+    def test_register_duplicate_raises(self):
+        """Registering the same pipeline ID twice should raise a ValueError."""
+        session = SchedulerSession()
+        session.register("p1")
+        with pytest.raises(ValueError, match="p1"):
+            session.register("p1")

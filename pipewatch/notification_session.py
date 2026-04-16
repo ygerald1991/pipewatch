@@ -55,3 +55,11 @@ class NotificationSession:
     def history(self) -> List[Dict]:
         """Return all dispatch records accumulated across run() calls."""
         return list(self._dispatched)
+
+    def clear_history(self) -> None:
+        """Clear all accumulated dispatch records."""
+        self._dispatched.clear()
+
+    def history_for_pipeline(self, pipeline_id: str) -> List[Dict]:
+        """Return dispatch records filtered to a specific pipeline ID."""
+        return [r for r in self._dispatched if r["pipeline_id"] == pipeline_id]

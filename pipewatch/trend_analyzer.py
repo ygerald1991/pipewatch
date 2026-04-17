@@ -32,6 +32,21 @@ def _linear_slope(values: List[float]) -> float:
     return numerator / denominator if denominator != 0 else 0.0
 
 
+def _classify_direction(slope: float, threshold: float, higher_is_better: bool) -> str:
+    """Classify a slope as 'improving', 'degrading', or 'stable'.
+
+    Args:
+        slope: The computed linear slope of the metric values.
+        threshold: Absolute slope value below which the trend is considered stable.
+        higher_is_better: If True, a positive slope is improving; otherwise degrading.
+    """
+    if abs(slope) <= threshold:
+        return "stable"
+    if slope > 0:
+        return "improving" if higher_is_better else "degrading"
+    return "degrading" if higher_is_better else "improving"
+
+
 def analyze_error_rate_trend(
     pipeline_id: str,
     metrics: List[PipelineMetric],
@@ -43,12 +58,7 @@ def analyze_error_rate_trend(
     rates = [error_rate(m) for m in metrics]
     slope = _linear_slope(rates)
     delta = rates[-1] - rates[0]
-    if abs(slope) <= stable_threshold:
-        direction = "stable"
-    elif slope > 0:
-        direction = "degrading"
-    else:
-        direction = "improving"
+    direction = _classify_direction(slope, stable_threshold, higher_is_better=False)
     return TrendResult(
         pipeline_id=pipeline_id,
         metric_name="error_rate",
@@ -69,12 +79,7 @@ def analyze_throughput_trend(
     rates = [throughput(m) for m in metrics]
     slope = _linear_slope(rates)
     delta = rates[-1] - rates[0]
-    if abs(slope) <= stable_threshold:
-        direction = "stable"
-    elif slope > 0:
-        direction = "improving"
-    else:
-        direction = "degrading"
+    direction = _classify_direction(slope, stable_threshold, higher_is_better=True)
     return TrendResult(
         pipeline_id=pipeline_id,
         metric_name="throughput",

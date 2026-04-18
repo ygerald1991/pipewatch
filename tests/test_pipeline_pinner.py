@@ -76,3 +76,10 @@ class TestPipelinePinner:
         ts = datetime(2024, 1, 1, 12, 0, 0)
         entry = self.pinner.pin("pipe-z", pinned_at=ts)
         assert entry.pinned_at == ts
+
+    def test_pin_same_pipeline_twice_does_not_duplicate(self):
+        """Re-pinning an already pinned pipeline should not create duplicate entries."""
+        self.pinner.pin("pipe-a", reason="first")
+        self.pinner.pin("pipe-a", reason="second")
+        ids = self.pinner.pinned_ids()
+        assert ids.count("pipe-a") == 1

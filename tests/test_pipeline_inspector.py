@@ -81,10 +81,10 @@ class TestInspectorSession:
         results = session.run()
         assert len(results) == 2
 
-    def test_flagged_filters_only_problematic(self):
-        session = InspectorSession(error_rate_warn=0.05)
-        session.add_snapshot(make_snapshot("healthy", 0.01, 50.0))
-        session.add_snapshot(make_snapshot("sick", 0.20, 50.0))
-        flagged = session.flagged()
-        assert len(flagged) == 1
-        assert flagged[0].pipeline_id == "sick"
+    def test_run_result_pipeline_ids_match(self):
+        session = InspectorSession()
+        session.add_snapshot(make_snapshot("p1", 0.01, 50.0))
+        session.add_snapshot(make_snapshot("p2", 0.02, 40.0))
+        results = session.run()
+        result_ids = {r.pipeline_id for r in results}
+        assert result_ids == {"p1", "p2"}

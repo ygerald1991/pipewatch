@@ -6,11 +6,11 @@ from pipewatch.snapshot import PipelineSnapshot
 from pipewatch.metrics import PipelineStatus
 
 
-def make_snapshot(pipeline_id="pipe-1"):
+def make_snapshot(pipeline_id="pipe-1", error_rate=0.01, throughput=50.0):
     return PipelineSnapshot(
         pipeline_id=pipeline_id,
-        error_rate=0.01,
-        throughput=50.0,
+        error_rate=error_rate,
+        throughput=throughput,
         metric_count=5,
         status=PipelineStatus.HEALTHY,
     )
@@ -71,3 +71,14 @@ class TestBaselineStore:
         store.set(snap2)
         assert store.get("pipe-c") is snap2
         assert len(store) == 1
+
+    def test_pipeline_ids_empty_when_store_is_empty(self):
+        store = BaselineStore()
+        assert list(store.pipeline_ids()) == []
+
+    def test_len_reflects_unique_pipelines(self):
+        store = BaselineStore()
+        store.set(make_snapshot("p1"))
+        store.set(make_snapshot("p2"))
+        store.set(make_snapshot("p1"))  # overwrite, should not increase count
+        assert len(store) == 2

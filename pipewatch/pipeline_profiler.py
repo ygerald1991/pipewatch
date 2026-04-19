@@ -19,9 +19,11 @@ class PipelineProfile:
     error_rate_variance: Optional[float]
 
     def __str__(self) -> str:
+        avg_err = f"{self.avg_error_rate:.4f}" if self.avg_error_rate is not None else "N/A"
+        avg_tp = f"{self.avg_throughput:.2f}" if self.avg_throughput is not None else "N/A"
         return (
             f"Profile({self.pipeline_id}: samples={self.sample_count}, "
-            f"avg_err={self.avg_error_rate:.4f}, avg_tp={self.avg_throughput:.2f})"
+            f"avg_err={avg_err}, avg_tp={avg_tp})"
         )
 
 

@@ -53,6 +53,10 @@ class SchedulerSession:
     def total_triggered(self) -> int:
         return sum(len(r.triggered) for r in self._history)
 
+    def clear_history(self) -> None:
+        """Clear the recorded tick history, resetting total_triggered to zero."""
+        self._history.clear()
+
     @property
     def scheduler(self) -> PipelineScheduler:
         return self._scheduler

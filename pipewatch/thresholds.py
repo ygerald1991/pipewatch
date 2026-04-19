@@ -34,6 +34,24 @@ class ThresholdConfig:
                 setattr(overridden, key, value)
         return overridden
 
+    def validate(self) -> None:
+        """Raise ValueError if any threshold values are logically inconsistent."""
+        if self.error_rate_warning >= self.error_rate_critical:
+            raise ValueError(
+                f"error_rate_warning ({self.error_rate_warning}) must be "
+                f"less than error_rate_critical ({self.error_rate_critical})"
+            )
+        if self.throughput_warning <= self.throughput_critical:
+            raise ValueError(
+                f"throughput_warning ({self.throughput_warning}) must be "
+                f"greater than throughput_critical ({self.throughput_critical})"
+            )
+        if self.latency_warning >= self.latency_critical:
+            raise ValueError(
+                f"latency_warning ({self.latency_warning}) must be "
+                f"less than latency_critical ({self.latency_critical})"
+            )
+
 
 DEFAULT_THRESHOLDS = ThresholdConfig()
 
@@ -45,4 +63,5 @@ def load_thresholds(config: Optional[Dict] = None) -> ThresholdConfig:
     overrides = config.pop("overrides", {})
     cfg = ThresholdConfig(**{k: v for k, v in config.items() if hasattr(ThresholdConfig, k)})
     cfg.overrides = overrides
+    cfg.validate()
     return cfg

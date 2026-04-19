@@ -28,6 +28,10 @@ class StagerResult:
     def for_stage(self, stage: str) -> List[StageResult]:
         return [r for r in self.stages if r.stage == stage]
 
+    def stage_names(self) -> List[str]:
+        """Return a sorted list of unique stage names present in the results."""
+        return sorted({r.stage for r in self.stages})
+
 
 def _safe_avg(values: List[float]) -> Optional[float]:
     return sum(values) / len(values) if values else None

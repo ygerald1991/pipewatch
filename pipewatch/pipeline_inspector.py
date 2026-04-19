@@ -15,9 +15,11 @@ class InspectionResult:
 
     def __str__(self) -> str:
         flags = ", ".join(self.flags) if self.flags else "none"
+        avg_err = f"{self.avg_error_rate:.3f}" if self.avg_error_rate is not None else "N/A"
+        avg_thr = f"{self.avg_throughput:.1f}" if self.avg_throughput is not None else "N/A"
         return (
             f"[{self.pipeline_id}] snapshots={self.snapshot_count} "
-            f"avg_error={self.avg_error_rate:.3f} avg_throughput={self.avg_throughput:.1f} "
+            f"avg_error={avg_err} avg_throughput={avg_thr} "
             f"flags=[{flags}]"
         )
 

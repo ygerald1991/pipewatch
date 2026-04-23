@@ -7,6 +7,14 @@ def _format_row(pipeline_id: str, status: str, reason: str) -> str:
 
 
 def render_blocker_table(result: BlockerResult) -> str:
+    """Render a formatted table report of pipeline blocker results.
+
+    Args:
+        result: A BlockerResult containing blocked and allowed pipeline snapshots.
+
+    Returns:
+        A multi-line string table suitable for console output.
+    """
     if not result.pipeline_ids:
         return "No pipelines tracked by blocker."
 
@@ -27,6 +35,14 @@ def render_blocker_table(result: BlockerResult) -> str:
 
 
 def blocked_summary(result: BlockerResult) -> str:
+    """Return a brief human-readable summary of blocked pipelines.
+
+    Args:
+        result: A BlockerResult containing blocked and allowed pipeline snapshots.
+
+    Returns:
+        A single-line summary string.
+    """
     if result.total_blocked == 0:
         return "All pipelines are allowed."
     ids = ", ".join(e.pipeline_id for e in result.blocked)

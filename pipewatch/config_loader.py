@@ -11,10 +11,15 @@ _SUPPORTED_EXTENSIONS = (".json", ".yaml", ".yml")
 
 def _read_file(path: str) -> Dict[str, Any]:
     ext = os.path.splitext(path)[1].lower()
+    if ext not in _SUPPORTED_EXTENSIONS:
+        raise ValueError(
+            f"Unsupported config file format: '{ext}'. "
+            f"Supported formats: {', '.join(_SUPPORTED_EXTENSIONS)}"
+        )
     with open(path, "r", encoding="utf-8") as fh:
         if ext == ".json":
             return json.load(fh)
-        elif ext in (".yaml", ".yml"):
+        else:  # .yaml / .yml
             try:
                 import yaml
                 return yaml.safe_load(fh) or {}
@@ -22,8 +27,6 @@ def _read_file(path: str) -> Dict[str, Any]:
                 raise ImportError(
                     "PyYAML is required to load YAML config files: pip install pyyaml"
                 ) from exc
-        else:
-            raise ValueError(f"Unsupported config file format: {ext}")
 
 
 def load_config(path: Optional[str] = None) -> Dict[str, Any]:
